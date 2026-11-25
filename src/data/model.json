@@ -1,0 +1,2123 @@
+{
+ "version": "1.0.0",
+ "title": "MediBayes educational model",
+ "disclaimer": "Educational prototype. Probabilities are illustrative and many are assumed. Not medical advice.",
+ "diseases": [
+  {
+   "id": "flu",
+   "name": "Influenza",
+   "description": "Seasonal viral infection with abrupt fever, aches and fatigue.",
+   "confirmatoryTest": "Rapid influenza molecular assay / PCR",
+   "redFlag": false,
+   "isOther": false
+  },
+  {
+   "id": "cold",
+   "name": "Common cold",
+   "description": "Mild self-limiting viral upper-respiratory infection.",
+   "confirmatoryTest": "Usually clinical diagnosis; no test needed",
+   "redFlag": false,
+   "isOther": false
+  },
+  {
+   "id": "covid",
+   "name": "COVID-19",
+   "description": "SARS-CoV-2 infection with highly variable presentation.",
+   "confirmatoryTest": "Rapid antigen test or PCR",
+   "redFlag": false,
+   "isOther": false
+  },
+  {
+   "id": "allergy",
+   "name": "Allergic rhinitis",
+   "description": "IgE-mediated nasal and ocular allergy (hay fever).",
+   "confirmatoryTest": "Allergen skin-prick test / specific IgE",
+   "redFlag": false,
+   "isOther": false
+  },
+  {
+   "id": "strep",
+   "name": "Strep throat",
+   "description": "Group A streptococcal pharyngitis.",
+   "confirmatoryTest": "Rapid antigen detection test / throat culture",
+   "redFlag": false,
+   "isOther": false
+  },
+  {
+   "id": "bronch",
+   "name": "Bronchitis",
+   "description": "Inflammation of the bronchi, dominated by cough.",
+   "confirmatoryTest": "Clinical; chest X-ray only if pneumonia is suspected",
+   "redFlag": false,
+   "isOther": false
+  },
+  {
+   "id": "pneum",
+   "name": "Pneumonia",
+   "description": "Infection of the lung parenchyma; potentially serious.",
+   "confirmatoryTest": "Chest X-ray, pulse oximetry, blood tests",
+   "redFlag": true,
+   "isOther": false
+  },
+  {
+   "id": "gastro",
+   "name": "Gastroenteritis",
+   "description": "Infectious inflammation of the stomach and intestines.",
+   "confirmatoryTest": "Usually clinical; stool test if severe or prolonged",
+   "redFlag": false,
+   "isOther": false
+  },
+  {
+   "id": "migraine",
+   "name": "Migraine",
+   "description": "Recurrent neurological headache disorder, often with photophobia and nausea.",
+   "confirmatoryTest": "Clinical diagnosis (ICHD-3 criteria)",
+   "redFlag": false,
+   "isOther": false
+  },
+  {
+   "id": "t2d",
+   "name": "Type 2 diabetes",
+   "description": "Chronic metabolic disorder with raised blood glucose.",
+   "confirmatoryTest": "Fasting plasma glucose or HbA1c",
+   "redFlag": false,
+   "isOther": false
+  },
+  {
+   "id": "other",
+   "name": "No disease / other",
+   "description": "Everything not covered by the ten modelled diseases, including healthy.",
+   "confirmatoryTest": "Consult a clinician if symptoms persist",
+   "redFlag": false,
+   "isOther": true
+  }
+ ],
+ "symptoms": [
+  {
+   "id": "fever",
+   "label": "Fever",
+   "system": "General",
+   "regions": [
+    "body"
+   ],
+   "description": "Body temperature above ~38 °C (100.4 °F)."
+  },
+  {
+   "id": "fatigue",
+   "label": "Fatigue",
+   "system": "General",
+   "regions": [
+    "body"
+   ],
+   "description": "Unusual tiredness or lack of energy."
+  },
+  {
+   "id": "muscle_aches",
+   "label": "Muscle aches",
+   "system": "General",
+   "regions": [
+    "body"
+   ],
+   "description": "Generalised muscle or body pain (myalgia)."
+  },
+  {
+   "id": "cough",
+   "label": "Cough",
+   "system": "Respiratory",
+   "regions": [
+    "chest",
+    "throat"
+   ],
+   "description": "Any cough, productive or not. Overlaps with dry cough (see limitations)."
+  },
+  {
+   "id": "dry_cough",
+   "label": "Dry cough",
+   "system": "Respiratory",
+   "regions": [
+    "chest",
+    "throat"
+   ],
+   "description": "Cough without mucus or phlegm."
+  },
+  {
+   "id": "shortness_of_breath",
+   "label": "Shortness of breath",
+   "system": "Respiratory",
+   "regions": [
+    "chest"
+   ],
+   "description": "Difficulty breathing or feeling breathless at rest or light activity."
+  },
+  {
+   "id": "chest_pain",
+   "label": "Chest pain",
+   "system": "Respiratory",
+   "regions": [
+    "chest"
+   ],
+   "description": "Pain or tightness in the chest, often worse on breathing."
+  },
+  {
+   "id": "sore_throat",
+   "label": "Sore throat",
+   "system": "Ear, nose & throat",
+   "regions": [
+    "throat",
+    "head"
+   ],
+   "description": "Pain or scratchiness in the throat, worse when swallowing."
+  },
+  {
+   "id": "runny_nose",
+   "label": "Runny / blocked nose",
+   "system": "Ear, nose & throat",
+   "regions": [
+    "head"
+   ],
+   "description": "Nasal discharge or congestion."
+  },
+  {
+   "id": "sneezing",
+   "label": "Sneezing",
+   "system": "Ear, nose & throat",
+   "regions": [
+    "head"
+   ],
+   "description": "Repeated sneezing fits."
+  },
+  {
+   "id": "loss_of_smell",
+   "label": "Loss of smell",
+   "system": "Ear, nose & throat",
+   "regions": [
+    "head"
+   ],
+   "description": "Reduced or absent sense of smell or taste."
+  },
+  {
+   "id": "itchy_eyes",
+   "label": "Itchy eyes",
+   "system": "Neurological & eyes",
+   "regions": [
+    "head"
+   ],
+   "description": "Itchy, watery or red eyes."
+  },
+  {
+   "id": "headache",
+   "label": "Headache",
+   "system": "Neurological & eyes",
+   "regions": [
+    "head"
+   ],
+   "description": "Pain in the head, any type."
+  },
+  {
+   "id": "light_sensitivity",
+   "label": "Light sensitivity",
+   "system": "Neurological & eyes",
+   "regions": [
+    "head"
+   ],
+   "description": "Discomfort in bright light (photophobia)."
+  },
+  {
+   "id": "blurred_vision",
+   "label": "Blurred vision",
+   "system": "Neurological & eyes",
+   "regions": [
+    "head"
+   ],
+   "description": "Difficulty focusing or hazy vision."
+  },
+  {
+   "id": "nausea",
+   "label": "Nausea",
+   "system": "Digestive",
+   "regions": [
+    "abdomen"
+   ],
+   "description": "Feeling the urge to vomit."
+  },
+  {
+   "id": "vomiting",
+   "label": "Vomiting",
+   "system": "Digestive",
+   "regions": [
+    "abdomen"
+   ],
+   "description": "Forceful emptying of the stomach."
+  },
+  {
+   "id": "diarrhea",
+   "label": "Diarrhea",
+   "system": "Digestive",
+   "regions": [
+    "abdomen"
+   ],
+   "description": "Three or more loose or watery stools per day."
+  },
+  {
+   "id": "abdominal_pain",
+   "label": "Abdominal pain",
+   "system": "Digestive",
+   "regions": [
+    "abdomen"
+   ],
+   "description": "Cramps or pain in the belly."
+  },
+  {
+   "id": "excessive_thirst",
+   "label": "Excessive thirst",
+   "system": "Metabolic",
+   "regions": [
+    "body"
+   ],
+   "description": "Persistent, unusually strong thirst (polydipsia)."
+  },
+  {
+   "id": "frequent_urination",
+   "label": "Frequent urination",
+   "system": "Metabolic",
+   "regions": [
+    "body"
+   ],
+   "description": "Needing to urinate much more often than usual (polyuria)."
+  }
+ ],
+ "priors": {
+  "flu": {
+   "value": 0.08,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "cold": {
+   "value": 0.2,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "covid": {
+   "value": 0.07,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "allergy": {
+   "value": 0.08,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "strep": {
+   "value": 0.04,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "bronch": {
+   "value": 0.05,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "pneum": {
+   "value": 0.015,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "gastro": {
+   "value": 0.07,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "migraine": {
+   "value": 0.06,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "t2d": {
+   "value": 0.03,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  },
+  "other": {
+   "value": 0.305,
+   "source": "Assumed - illustrative share among adults presenting with an acute complaint in primary care; NOT a measured prevalence",
+   "isAssumed": true
+  }
+ },
+ "likelihoods": {
+  "flu": {
+   "fever": {
+    "value": 0.68,
+    "source": "Carrat F et al., Am J Epidemiol 2008;167(7):775-785 (influenza symptom frequencies; approximate transcription)",
+    "isAssumed": false
+   },
+   "fatigue": {
+    "value": 0.94,
+    "source": "Carrat F et al., Am J Epidemiol 2008;167(7):775-785 (influenza symptom frequencies; approximate transcription)",
+    "isAssumed": false
+   },
+   "muscle_aches": {
+    "value": 0.94,
+    "source": "Carrat F et al., Am J Epidemiol 2008;167(7):775-785 (influenza symptom frequencies; approximate transcription)",
+    "isAssumed": false
+   },
+   "cough": {
+    "value": 0.93,
+    "source": "Carrat F et al., Am J Epidemiol 2008;167(7):775-785 (influenza symptom frequencies; approximate transcription)",
+    "isAssumed": false
+   },
+   "dry_cough": {
+    "value": 0.55,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.25,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.84,
+    "source": "Carrat F et al., Am J Epidemiol 2008;167(7):775-785 (influenza symptom frequencies; approximate transcription)",
+    "isAssumed": false
+   },
+   "runny_nose": {
+    "value": 0.91,
+    "source": "Carrat F et al., Am J Epidemiol 2008;167(7):775-785 (influenza symptom frequencies; approximate transcription)",
+    "isAssumed": false
+   },
+   "sneezing": {
+    "value": 0.45,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.91,
+    "source": "Carrat F et al., Am J Epidemiol 2008;167(7):775-785 (influenza symptom frequencies; approximate transcription)",
+    "isAssumed": false
+   },
+   "light_sensitivity": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.3,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/flu/signs-symptoms/index.html",
+    "isAssumed": true
+   }
+  },
+  "cold": {
+   "fever": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "fatigue": {
+    "value": 0.4,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "muscle_aches": {
+    "value": 0.2,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "cough": {
+    "value": 0.5,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "dry_cough": {
+    "value": 0.25,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.55,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "runny_nose": {
+    "value": 0.85,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.7,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.3,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "light_sensitivity": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/common-cold/about/index.html",
+    "isAssumed": true
+   }
+  },
+  "covid": {
+   "fever": {
+    "value": 0.88,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "fatigue": {
+    "value": 0.38,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "muscle_aches": {
+    "value": 0.15,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "cough": {
+    "value": 0.75,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "dry_cough": {
+    "value": 0.68,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "shortness_of_breath": {
+    "value": 0.186,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "chest_pain": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.139,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "runny_nose": {
+    "value": 0.2,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.4,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.136,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "light_sensitivity": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.05,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "vomiting": {
+    "value": 0.05,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "diarrhea": {
+    "value": 0.037,
+    "source": "WHO-China Joint Mission on COVID-19 report, Feb 2020 (hospitalised original-strain cohort; likely differs for recent variants)",
+    "isAssumed": false
+   },
+   "abdominal_pain": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/covid/signs-symptoms/index.html",
+    "isAssumed": true
+   }
+  },
+  "allergy": {
+   "fever": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "fatigue": {
+    "value": 0.25,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "muscle_aches": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "cough": {
+    "value": 0.2,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "dry_cough": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.25,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "runny_nose": {
+    "value": 0.85,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.9,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.2,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.8,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.35,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "light_sensitivity": {
+    "value": 0.2,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.niaid.nih.gov/diseases-conditions/allergic-rhinitis",
+    "isAssumed": true
+   }
+  },
+  "strep": {
+   "fever": {
+    "value": 0.55,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "fatigue": {
+    "value": 0.35,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "muscle_aches": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "cough": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "dry_cough": {
+    "value": 0.06,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.9,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "runny_nose": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.25,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "light_sensitivity": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/group-a-strep/about/strep-throat.html",
+    "isAssumed": true
+   }
+  },
+  "bronch": {
+   "fever": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "fatigue": {
+    "value": 0.4,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "muscle_aches": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "cough": {
+    "value": 0.98,
+    "source": "Case definition (condition is defined by this symptom)",
+    "isAssumed": false
+   },
+   "dry_cough": {
+    "value": 0.45,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.3,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.25,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.2,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "runny_nose": {
+    "value": 0.3,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.2,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "light_sensitivity": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/antibiotic-use/chest-colds.html",
+    "isAssumed": true
+   }
+  },
+  "pneum": {
+   "fever": {
+    "value": 0.75,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "fatigue": {
+    "value": 0.6,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "muscle_aches": {
+    "value": 0.3,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "cough": {
+    "value": 0.85,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "dry_cough": {
+    "value": 0.4,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.8,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.5,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "runny_nose": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.3,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "light_sensitivity": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/pneumonia/about/index.html",
+    "isAssumed": true
+   }
+  },
+  "gastro": {
+   "fever": {
+    "value": 0.3,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "fatigue": {
+    "value": 0.45,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "muscle_aches": {
+    "value": 0.2,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "cough": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "dry_cough": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "runny_nose": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.2,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "light_sensitivity": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.75,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.6,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.85,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.8,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/norovirus/about/symptoms.html",
+    "isAssumed": true
+   }
+  },
+  "migraine": {
+   "fever": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "fatigue": {
+    "value": 0.3,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "muscle_aches": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "cough": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "dry_cough": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "runny_nose": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.99,
+    "source": "Case definition (condition is defined by this symptom)",
+    "isAssumed": false
+   },
+   "light_sensitivity": {
+    "value": 0.8,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.25,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.73,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.3,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://ichd-3.org/",
+    "isAssumed": true
+   }
+  },
+  "t2d": {
+   "fever": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "fatigue": {
+    "value": 0.35,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "muscle_aches": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "cough": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "dry_cough": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "runny_nose": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.01,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "light_sensitivity": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.35,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.1,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.75,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.7,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: https://www.cdc.gov/diabetes/signs-symptoms/index.html",
+    "isAssumed": true
+   }
+  },
+  "other": {
+   "fever": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "fatigue": {
+    "value": 0.18,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "muscle_aches": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "cough": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "dry_cough": {
+    "value": 0.07,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "shortness_of_breath": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "chest_pain": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "sore_throat": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "runny_nose": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "sneezing": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "loss_of_smell": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "itchy_eyes": {
+    "value": 0.02,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "headache": {
+    "value": 0.15,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "light_sensitivity": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "blurred_vision": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "nausea": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "vomiting": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "diarrhea": {
+    "value": 0.06,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "abdominal_pain": {
+    "value": 0.08,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "excessive_thirst": {
+    "value": 0.03,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   },
+   "frequent_urination": {
+    "value": 0.05,
+    "source": "Assumed - clinician-style estimate, not measured. Qualitative reference: n/a",
+    "isAssumed": true
+   }
+  }
+ },
+ "riskFactors": [
+  {
+   "id": "age",
+   "label": "Age group",
+   "description": "Age shifts the prior of most infectious and metabolic diseases.",
+   "levels": [
+    {
+     "id": "child",
+     "label": "Child / teen (<18)"
+    },
+    {
+     "id": "adult",
+     "label": "Adult (18-64)"
+    },
+    {
+     "id": "older",
+     "label": "Older adult (65+)"
+    }
+   ],
+   "distribution": {
+    "child": {
+     "value": 0.22,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "adult": {
+     "value": 0.58,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "older": {
+     "value": 0.2,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    }
+   },
+   "multipliers": {
+    "child": {
+     "flu": {
+      "value": 1.3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "cold": {
+      "value": 1.8,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "covid": {
+      "value": 0.9,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "strep": {
+      "value": 2.5,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "bronch": {
+      "value": 0.8,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "pneum": {
+      "value": 0.8,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "gastro": {
+      "value": 1.5,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "migraine": {
+      "value": 0.5,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "t2d": {
+      "value": 0.15,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    },
+    "adult": {},
+    "older": {
+     "flu": {
+      "value": 1.2,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "cold": {
+      "value": 0.6,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "covid": {
+      "value": 1.3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "allergy": {
+      "value": 0.6,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "strep": {
+      "value": 0.4,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "bronch": {
+      "value": 1.6,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "pneum": {
+      "value": 3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "gastro": {
+      "value": 0.9,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "migraine": {
+      "value": 0.5,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "t2d": {
+      "value": 3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    }
+   }
+  },
+  {
+   "id": "smoker",
+   "label": "Smoker",
+   "description": "Current tobacco smoking.",
+   "levels": [
+    {
+     "id": "no",
+     "label": "Non-smoker"
+    },
+    {
+     "id": "yes",
+     "label": "Smoker"
+    }
+   ],
+   "distribution": {
+    "no": {
+     "value": 0.88,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "yes": {
+     "value": 0.12,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    }
+   },
+   "multipliers": {
+    "no": {},
+    "yes": {
+     "flu": {
+      "value": 1.2,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "cold": {
+      "value": 1.1,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "covid": {
+      "value": 1.2,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "allergy": {
+      "value": 0.9,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "bronch": {
+      "value": 3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "pneum": {
+      "value": 2,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "t2d": {
+      "value": 1.4,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    }
+   }
+  },
+  {
+   "id": "vaccinated",
+   "label": "Vaccinated",
+   "description": "Up to date with seasonal influenza / COVID-19 vaccination.",
+   "levels": [
+    {
+     "id": "yes",
+     "label": "Vaccinated"
+    },
+    {
+     "id": "no",
+     "label": "Not vaccinated"
+    }
+   ],
+   "distribution": {
+    "yes": {
+     "value": 0.5,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "no": {
+     "value": 0.5,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    }
+   },
+   "multipliers": {
+    "yes": {
+     "flu": {
+      "value": 0.5,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "covid": {
+      "value": 0.6,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "pneum": {
+      "value": 0.7,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    },
+    "no": {}
+   }
+  },
+  {
+   "id": "season",
+   "label": "Season",
+   "description": "Seasonality of respiratory viruses and pollen.",
+   "levels": [
+    {
+     "id": "winter",
+     "label": "Winter"
+    },
+    {
+     "id": "spring",
+     "label": "Spring"
+    },
+    {
+     "id": "summer",
+     "label": "Summer"
+    },
+    {
+     "id": "autumn",
+     "label": "Autumn"
+    }
+   ],
+   "distribution": {
+    "winter": {
+     "value": 0.25,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "spring": {
+     "value": 0.25,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "summer": {
+     "value": 0.25,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "autumn": {
+     "value": 0.25,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    }
+   },
+   "multipliers": {
+    "winter": {
+     "flu": {
+      "value": 3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "cold": {
+      "value": 1.5,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "covid": {
+      "value": 1.5,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "allergy": {
+      "value": 0.4,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "strep": {
+      "value": 1.3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "bronch": {
+      "value": 1.8,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "pneum": {
+      "value": 1.6,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "gastro": {
+      "value": 1.3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    },
+    "spring": {
+     "flu": {
+      "value": 0.8,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "covid": {
+      "value": 0.9,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "allergy": {
+      "value": 3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "strep": {
+      "value": 1.1,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    },
+    "summer": {
+     "flu": {
+      "value": 0.15,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "cold": {
+      "value": 0.7,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "allergy": {
+      "value": 1.5,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "gastro": {
+      "value": 1.2,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    },
+    "autumn": {
+     "cold": {
+      "value": 1.3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "allergy": {
+      "value": 2,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    }
+   }
+  },
+  {
+   "id": "bmi",
+   "label": "BMI category",
+   "description": "Body-mass-index category; obesity is the main modifiable risk for type 2 diabetes.",
+   "levels": [
+    {
+     "id": "under",
+     "label": "Underweight (<18.5)"
+    },
+    {
+     "id": "normal",
+     "label": "Normal (18.5-24.9)"
+    },
+    {
+     "id": "over",
+     "label": "Overweight (25-29.9)"
+    },
+    {
+     "id": "obese",
+     "label": "Obese (30+)"
+    }
+   ],
+   "distribution": {
+    "under": {
+     "value": 0.02,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "normal": {
+     "value": 0.35,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "over": {
+     "value": 0.33,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "obese": {
+     "value": 0.3,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    }
+   },
+   "multipliers": {
+    "under": {
+     "pneum": {
+      "value": 1.3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "t2d": {
+      "value": 0.3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    },
+    "normal": {},
+    "over": {
+     "t2d": {
+      "value": 2,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    },
+    "obese": {
+     "flu": {
+      "value": 1.1,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "covid": {
+      "value": 1.3,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "pneum": {
+      "value": 1.2,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "migraine": {
+      "value": 1.1,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     },
+     "t2d": {
+      "value": 4,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    }
+   }
+  },
+  {
+   "id": "family",
+   "label": "Family history",
+   "description": "First-degree relative with diabetes or migraine.",
+   "levels": [
+    {
+     "id": "none",
+     "label": "None relevant"
+    },
+    {
+     "id": "diabetes",
+     "label": "Diabetes"
+    },
+    {
+     "id": "migraine",
+     "label": "Migraine"
+    }
+   ],
+   "distribution": {
+    "none": {
+     "value": 0.6,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "diabetes": {
+     "value": 0.28,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    },
+    "migraine": {
+     "value": 0.12,
+     "source": "Assumed - rough population share for the Bayesian-network parent prior",
+     "isAssumed": true
+    }
+   },
+   "multipliers": {
+    "none": {},
+    "diabetes": {
+     "t2d": {
+      "value": 2.5,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    },
+    "migraine": {
+     "migraine": {
+      "value": 2,
+      "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+      "isAssumed": true
+     }
+    }
+   }
+  }
+ ],
+ "interactions": [
+  {
+   "id": "smoker_older",
+   "description": "Smoking compounds age-related lung vulnerability.",
+   "when": {
+    "smoker": "yes",
+    "age": "older"
+   },
+   "multipliers": {
+    "bronch": {
+     "value": 1.5,
+     "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+     "isAssumed": true
+    },
+    "pneum": {
+     "value": 1.5,
+     "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+     "isAssumed": true
+    }
+   }
+  },
+  {
+   "id": "winter_unvaccinated",
+   "description": "Unvaccinated people are hit hardest by the winter influenza peak.",
+   "when": {
+    "season": "winter",
+    "vaccinated": "no"
+   },
+   "multipliers": {
+    "flu": {
+     "value": 1.4,
+     "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+     "isAssumed": true
+    }
+   }
+  },
+  {
+   "id": "obese_family_diabetes",
+   "description": "Obesity and a family history of diabetes act synergistically.",
+   "when": {
+    "bmi": "obese",
+    "family": "diabetes"
+   },
+   "multipliers": {
+    "t2d": {
+     "value": 1.5,
+     "source": "Assumed - qualitative epidemiology (seasonality, age, smoking, BMI, family history); multiplier magnitudes are illustrative",
+     "isAssumed": true
+    }
+   }
+  }
+ ]
+}

@@ -1,0 +1,104 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light;
+  --background: #ffffff;
+  --foreground: #1f2937;
+  --muted: #4b5563;
+  --subtle: #f3f4f6;
+  --card: rgba(249, 250, 251, 0.9);
+  --card-solid: #ffffff;
+  --border: rgba(17, 24, 39, 0.1);
+  --accent: #0f766e;
+  --accent-foreground: #ffffff;
+  --accent-soft: rgba(15, 118, 110, 0.12);
+  --ok: #15803d;
+  --warn: #a15c07;
+  --danger: #b91c1c;
+  --ring: #0f766e;
+  --shadow: 0 10px 40px -12px rgba(15, 23, 42, 0.12);
+}
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-subtle: var(--subtle);
+  --color-card: var(--card);
+  --color-card-solid: var(--card-solid);
+  --color-border: var(--border);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-soft: var(--accent-soft);
+  --color-ok: var(--ok);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+  min-height: 100vh;
+  background-image:
+    /* graph-paper grid (top layer, like the reference) */
+    repeating-linear-gradient(to right, rgba(96, 165, 250, 0.18) 0 1px, transparent 1px 32px),
+    repeating-linear-gradient(to bottom, rgba(96, 165, 250, 0.18) 0 1px, transparent 1px 32px),
+    /* soft blue watercolor glows */
+    radial-gradient(24rem 18rem at 8% 12%, rgba(147, 197, 253, 0.5), transparent 70%),
+    radial-gradient(18rem 14rem at 74% 6%, rgba(191, 219, 254, 0.55), transparent 70%),
+    radial-gradient(26rem 20rem at 94% 46%, rgba(147, 197, 253, 0.4), transparent 72%),
+    radial-gradient(20rem 16rem at 18% 66%, rgba(165, 243, 252, 0.35), transparent 70%),
+    radial-gradient(22rem 18rem at 62% 90%, rgba(191, 219, 254, 0.45), transparent 70%),
+    radial-gradient(16rem 14rem at 40% 34%, rgba(219, 234, 254, 0.6), transparent 70%),
+    radial-gradient(14rem 12rem at 6% 88%, rgba(191, 219, 254, 0.4), transparent 70%);
+  background-attachment: fixed;
+}
+
+.glass {
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+}
+
+:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.hatch {
+  background-image: repeating-linear-gradient(45deg, transparent 0 3px, rgba(255, 255, 255, 0.28) 3px 4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+}
+
+:root { --heat-max: 65%; }
+.heat-cell {
+  background: color-mix(in srgb, var(--accent) calc(var(--v) * var(--heat-max)), transparent);
+}
